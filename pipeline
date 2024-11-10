@@ -15,10 +15,10 @@ pipeline {
                     def departamento = params.departamento
 
                     // Contraseña temporal
-                    def password = "TempPass123!"  // Se puede personalizar
+                    def password = "clave123*"  // Se puede personalizar
 
-                    // Ejecutar comandos en la shell de Ubuntu
-                    sh """
+                    // Ejecutar comandos en la shell de Ubuntu, cada uno en su propia línea
+                    sh '''
                         # Crear el grupo si no existe
                         if ! getent group $departamento > /dev/null 2>&1; then
                             echo "Creando grupo: $departamento"
@@ -26,21 +26,28 @@ pipeline {
                         else
                             echo "El grupo $departamento ya existe"
                         fi
+                    '''
 
+                    sh '''
                         # Crear el usuario con el login proporcionado
                         echo "Creando el usuario: $login"
                         sudo useradd -m -s /bin/bash -c "$nombreApellido" -g $departamento $login
+                    '''
 
+                    sh '''
                         # Asignar una contraseña temporal al usuario
                         echo "$login:$password" | sudo chpasswd
+                    '''
 
+                    sh '''
                         # Forzar el cambio de contraseña en el próximo inicio de sesión
                         sudo chage -d 0 $login
+                    '''
 
+                    sh '''
                         # Mostrar la contraseña temporal en los logs de Jenkins (solo para fines de auditoría)
                         echo "Usuario $login creado con éxito. La contraseña temporal es: $password"
-
-                    """
+                    '''
                 }
             }
         }
