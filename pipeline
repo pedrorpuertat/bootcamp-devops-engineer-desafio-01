@@ -15,7 +15,7 @@ pipeline {
                     def departamento = params.departamento
 
                     // Contraseña temporal
-                    def password = "clave123*"  // Se puede personalizar
+                    def password = "TempPass123!"  // Se puede personalizar
 
                     // Ejecutar comandos en la shell de Ubuntu, cada uno en su propia línea
                     sh '''
