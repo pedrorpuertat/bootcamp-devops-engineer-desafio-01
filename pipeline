@@ -22,14 +22,14 @@ pipeline {
                         # Crear el grupo si no existe
                         if ! getent group $departamento > /dev/null 2>&1; then
                             echo "Creando grupo: $departamento"
-                            echo "$SUDO_PASS" | sudo -S groupadd $departamento
+                            sudo groupadd $departamento
                         else
                             echo "El grupo $departamento ya existe"
                         fi
 
                         # Crear el usuario con el login proporcionado
                         echo "Creando el usuario: $login"
-                        echo "$SUDO_PASS" | sudo -S useradd -m -s /bin/bash -c "$nombreApellido" -g $departamento $login
+                        sudo useradd -m -s /bin/bash -c "$nombreApellido" -g $departamento $login
 
                         # Asignar una contraseña temporal al usuario
                         echo "$login:$password" | sudo chpasswd
