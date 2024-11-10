@@ -36,7 +36,7 @@ pipeline {
 
                     sh '''
                         # Asignar una contraseña temporal al usuario
-                        echo "$login:$password" | sudo chpasswd
+                        echo "$password" | sudo passwd --stdin $login
                     '''
 
                     sh '''
