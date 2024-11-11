@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'login', defaultValue: '', description: 'Ingresa el login del usuario a eliminar')
+        string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario a eliminar')
+    }
+    stages {
+        stage('Eliminar Usuario, Grupo y Carpeta') {
+            steps {
+                script {
+                    // Obtener los parámetros
+                    def login = params.login
+                    def departamento = params.departamento
+
+                    // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
+                    sh """
+                            # Verificar si el usuario existe
+                            if id "$login" &>/dev/null; then
+                                echo 'Eliminando el usuario: $login'
+
+                                # Eliminar el usuario y su carpeta home
+                                sudo userdel -r $login
+                                echo 'Usuario $login eliminado y su carpeta home borrada.'
+
+                                # Verificar si el grupo está vacío antes de eliminarlo
+                                if getent group $departamento > /dev/null 2>&1; then
+                                    # Eliminar el grupo si no tiene usuarios asignados
+                                    if ! grep -q ":$departamento:" /etc/passwd; then
+                                        sudo groupdel $departamento
+                                        echo 'Grupo $departamento eliminado.'
+                                    else
+                                        echo 'El grupo $departamento no se puede eliminar porque tiene usuarios asignados.'
+                                    fi
+                                else
+                                    echo 'El grupo $departamento no existe.'
+                                fi
+                            else
+                                echo 'El usuario $login no existe, no se puede eliminar.'
+                            fi
+                    """
+                }
+            }
+        }
+    }
+}
