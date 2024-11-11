@@ -17,54 +17,6 @@ pipeline {
                     // Contraseña temporal
                     def password = "TempPass123!"  // Se puede personalizar
 
-                    // Ejecutar comandos en la shell de Ubuntu
-                    sh """
-                        # Crear el grupo si no existe
-                        if ! getent group $departamento > /dev/null 2>&1; then
-                            echo "Creando grupo: $departamento"
-                            sudo groupadd $departamento
-                        else
-                            echo "El grupo $departamento ya existe"
-                        fi
-
-                        # Crear el usuario con el login proporcionado
-                        echo "Creando el usuario: $login"
-                        sudo useradd -m -s /bin/bash -c "$nombreApellido" -g $departamento $login
-
-                        # Asignar una contraseña temporal al usuario
-                        echo "$login:$password" | sudo chpasswd
-
-                        # Forzar el cambio de contraseña en el próximo inicio de sesión
-                        sudo chage -d 0 $login
-
-                        # Mostrar la contraseña temporal en los logs de Jenkins (solo para fines de auditoría)
-                        echo "Usuario $login creado con éxito. La contraseña temporal es: $password"
-
-                    """
-                }
-            }
-        }
-    }
-}
-pipeline {
-    agent any
-    parameters {
-        string(name: 'login', defaultValue: '', description: 'Ingresa el login')
-        string(name: 'nombre-apellido', defaultValue: '', description: 'Ingresa el Nombre y Apellido')
-        string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario')
-    }
-    stages {
-        stage('Crear Usuario y Grupo') {
-            steps {
-                script {
-                    // Obtener los parámetros
-                    def login = params.login
-                    def nombreApellido = params.'nombre-apellido'
-                    def departamento = params.departamento
-
-                    // Contraseña temporal
-                    def password = "TempPass123!"  // Se puede personalizar
-
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
                         # Cambiar al usuario 'ubuntu' y ejecutar los comandos
