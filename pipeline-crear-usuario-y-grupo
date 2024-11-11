@@ -1,41 +1,48 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'login', defaultValue: '', description: 'Ingresa el login del usuario a eliminar')
-        string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario a eliminar')
+        string(name: 'login', defaultValue: '', description: 'Ingresa el login')
+        string(name: 'nombre-apellido', defaultValue: '', description: 'Ingresa el Nombre y Apellido')
+        string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario')
     }
     stages {
-        stage('Eliminar Usuario, Grupo y Carpeta') {
+        stage('Crear Usuario y Grupo') {
             steps {
                 script {
                     // Obtener los parámetros
                     def login = params.login
+                    def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
+
+                    // Contraseña temporal
+                    def password = "123456789*"  // Se puede personalizar
 
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
-                            # Verificar si el usuario existe
+                            # Verificar si el usuario ya existe usando getent
                             if getent passwd "$login" > /dev/null 2>&1; then
-                                echo 'Eliminando el usuario: $login'
-
-                                # Eliminar el usuario y su carpeta home
-                                sudo userdel -r $login
-                                echo 'Usuario $login eliminado y su carpeta home borrada.'
-
-                                # Verificar si el grupo está vacío antes de eliminarlo
-                                if getent group $departamento > /dev/null 2>&1; then
-                                    # Eliminar el grupo si no tiene usuarios asignados
-                                    if ! grep -q ":$departamento:" /etc/passwd; then
-                                        sudo groupdel $departamento
-                                        echo 'Grupo $departamento eliminado.'
-                                    else
-                                        echo 'El grupo $departamento no se puede eliminar porque tiene usuarios asignados.'
-                                    fi
-                                else
-                                    echo 'El grupo $departamento no existe.'
-                                fi
+                                echo 'El usuario $login ya existe, no se puede continuar.'
                             else
-                                echo 'El usuario $login no existe, no se puede eliminar.'
+                                # Crear el grupo si no existe
+                                if ! getent group $departamento > /dev/null 2>&1; then
+                                    echo 'Creando grupo: $departamento'
+                                    sudo groupadd $departamento
+                                else
+                                    echo 'El grupo $departamento ya existe'
+                                fi
+
+                                # Crear el usuario con el login proporcionado
+                                echo 'Creando el usuario: $login'
+                                sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
+
+                                # Asignar una contraseña temporal al usuario
+                                echo '$login:$password' | sudo chpasswd
+
+                                # Forzar el cambio de contraseña en el próximo inicio de sesión
+                                sudo chage -d 0 $login
+
+                                # Mostrar la contraseña temporal en los logs de Jenkins (solo para fines de auditoría)
+                                echo 'Usuario $login creado con éxito. La contraseña temporal es: $password'
                             fi
                     """
                 }
