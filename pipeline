@@ -19,8 +19,6 @@ pipeline {
 
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
-                        # Cambiar al usuario 'ubuntu' y ejecutar los comandos
-                        sudo -u ubuntu bash -c \"
                             # Crear el grupo si no existe
                             if ! getent group $departamento > /dev/null 2>&1; then
                                 echo 'Creando grupo: $departamento'
@@ -41,7 +39,6 @@ pipeline {
 
                             # Mostrar la contraseña temporal en los logs de Jenkins (solo para fines de auditoría)
                             echo 'Usuario $login creado con éxito. La contraseña temporal es: $password'
-                        \"
                     """
                 }
             }
