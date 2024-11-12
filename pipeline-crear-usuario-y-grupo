@@ -45,20 +45,20 @@ pipeline {
                 }
             }
         }
-        post {
-            success {
-                    echo "Usuario $login fue creado con éxito. La contraseña temporal es: $password"
-            }
-            aborted {
-                echo "El usuario y grupo no fueron creados"
-                sh "sudo userdel -r $login"
-                sh "sudo groupdel $departamento"
-            }
-            failure {
-                echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
-                sh "sudo userdel -r $login"
-                sh "sudo groupdel $departamento"
-            }
+    }
+    post {
+        success {
+            echo "Usuario $login fue creado con éxito. La contraseña temporal es: $password"
+        }
+        aborted {
+            echo "El usuario y grupo no fueron creados"
+            sh "sudo userdel -r $login"
+                h "sudo groupdel $departamento"
+        }
+        failure {
+            echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
+            sh "sudo userdel -r $login"
+            sh "sudo groupdel $departamento"
         }
     }
 }
