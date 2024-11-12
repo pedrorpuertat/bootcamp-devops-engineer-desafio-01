@@ -8,3 +8,7 @@ Entrega 01 de Botocamp
 - Luego de esto debemos guardar los cambios y correr el siguiente comando para asignar los permisos de solo lectura: sudo chmod 440 jenkins
 - Luego debemos correr el siguiente comando:  sudo visudo --check  esto para comprobar que todo este ok, no debe dar un resultado como el siguiente:  /etc/sudoers.d/jenkins: parsed OK
 - y para finalizar debemos agregar a Jenkins dentro del grupo sudo con el siguiente comando: sudo usermod -a -G sudo jenkins
+
+# Explicacio de Pipeline
+- pipeline-crear-usuario-y-grupo: Job de pipeline para la creacion de usuario y grupo, se le pedira tres variables para poder crear el nuevo usuario, las variables son: Login, Nombre y Apellido y Departamento
+- pipeline-eliminar-usuario-y-grupo: Job de pipeline para la eliminacion de usuario y grupo, se le pedira 2 variables para poder eliminar el usuario y grupo, las variables son: Login, Departamento.
