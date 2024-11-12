@@ -13,7 +13,7 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
-                    
+
                     // Contraseña temporal
                     def password = "123456789*"  // Se puede personalizar
 
@@ -48,7 +48,7 @@ pipeline {
     }
     post {
         success {
-            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${params.password}"
+            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${password}"
         }
         aborted {
             echo "El usuario y grupo no fueron creados"
