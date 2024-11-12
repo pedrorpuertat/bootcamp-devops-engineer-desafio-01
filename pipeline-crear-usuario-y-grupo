@@ -39,7 +39,8 @@ pipeline {
                                 echo '$login:$password' | sudo chpasswd
 
                                 # Forzar el cambio de contraseña en el próximo inicio de sesión
-                                sudo chage -d 0 $login
+                                # sudo chage -d 0 $login
+                                sudo passwd -e $login
 
                                 # Mostrar la contraseña temporal en los logs de Jenkins (solo para fines de auditoría)
                                 echo 'Usuario $login creado con éxito. La contraseña temporal es: $password'
