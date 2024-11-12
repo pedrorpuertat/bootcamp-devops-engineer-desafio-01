@@ -20,7 +20,7 @@ pipeline {
 
                                 # Eliminar el usuario y su carpeta home
                                 sudo userdel -r $login
-                                echo 'Usuario $login fue eliminado y su carpeta home fue borrada.'
+                                echo 'Usuario $login fue eliminado con su carpeta de home.'
 
                                 # Verificar si el grupo está vacío antes de eliminarlo
                                 if getent group $departamento > /dev/null 2>&1; then
@@ -39,6 +39,17 @@ pipeline {
                             fi
                     """
                 }
+            }
+        }
+        post {
+            success {
+                    echo "Usuario $login fue eliminado con su carpeta de home y el grupo $departamento fue eliminado."
+            }
+            aborted {
+                echo "El usuario y grupo no fueron eliminados"
+            }
+            failure {
+                echo "ERROR DE CODIGO, el usuario y grupo no fueron eliminado"
             }
         }
     }
