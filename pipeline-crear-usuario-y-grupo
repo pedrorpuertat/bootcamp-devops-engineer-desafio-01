@@ -13,14 +13,14 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
-
+                    
                     // Contraseña temporal
                     def password = "123456789*"  // Se puede personalizar
 
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
                             # Verificar si el usuario ya existe usando getent
-                            if getent passwd "$login" > /dev/null 2>&1; then
+                            if getent passwd  "$login" > /dev/null 2>&1; then
                                 echo 'El usuario $login ya existe, no se puede continuar.'
                             else
                                 # Crear el grupo si no existe
@@ -48,17 +48,17 @@ pipeline {
     }
     post {
         success {
-            echo "Usuario $login fue creado con éxito. La contraseña temporal es: $password"
+            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${params.password}"
         }
         aborted {
             echo "El usuario y grupo no fueron creados"
-            sh "sudo userdel -r $login"
-                h "sudo groupdel $departamento"
+            sh "sudo userdel -r ${params.login}"
+                h "sudo groupdel ${params.departamento}"
         }
         failure {
             echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
-            sh "sudo userdel -r $login"
-            sh "sudo groupdel $departamento"
+            sh "sudo userdel -r ${params.login}"
+            sh "sudo groupdel ${params.departamento}"
         }
     }
 }

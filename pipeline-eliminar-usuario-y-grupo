@@ -44,7 +44,7 @@ pipeline {
     }
      post {
         success {
-             echo "Usuario $login fue eliminado con su carpeta de home y el grupo $departamento fue eliminado."
+             echo "Usuario ${params.login} fue eliminado con su carpeta de home y el grupo ${params.departamento} fue eliminado."
         }
         aborted {
             echo "El usuario y grupo no fueron eliminados"
