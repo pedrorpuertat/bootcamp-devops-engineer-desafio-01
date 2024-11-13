@@ -5,6 +5,9 @@ pipeline {
         string(name: 'nombre-apellido', defaultValue: '', description: 'Ingresa el Nombre y Apellido')
         string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario')
     }
+     environment {
+        password = "123456789*"
+    }
     stages {
         stage('Crear Usuario y Grupo') {
             steps {
@@ -13,9 +16,6 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
-
-                    // Contraseña temporal
-                    def password = "123456789*"  // Se puede personalizar
 
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
@@ -36,7 +36,7 @@ pipeline {
                                 sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
 
                                 # Asignar una contraseña temporal al usuario
-                                echo '$login:$password' | sudo chpasswd
+                                echo "$login:${env.password}" | sudo chpasswd
 
                                 # Forzar el cambio de contraseña en el próximo inicio de sesión
                                 sudo passwd -e $login
@@ -48,7 +48,7 @@ pipeline {
     }
     post {
         success {
-            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${password}"
+            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"
         }
         aborted {
             echo "El usuario y grupo no fueron creados"
