@@ -47,7 +47,7 @@ pipeline {
              echo "Usuario ${params.login} fue eliminado con su carpeta de home y el grupo ${params.departamento} fue eliminado."
         }
         aborted {
-            echo "El usuario y grupo no fueron eliminados"
+            echo "El usuario y grupo no fueron eliminados o No Existen"
         }
         failure {
             echo "ERROR DE CODIGO, el usuario y grupo no fueron eliminado"

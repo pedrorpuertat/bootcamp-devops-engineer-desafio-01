@@ -53,7 +53,7 @@ pipeline {
         aborted {
             echo "El usuario y grupo no fueron creados"
             sh "sudo userdel -r ${params.login}"
-                h "sudo groupdel ${params.departamento}"
+            sh "sudo groupdel ${params.departamento}"
         }
         failure {
             echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
