@@ -1,5 +1,5 @@
 # bootcamp-devops-engineer-desafio-01
-Entrega 01 de Bootcamp
+Entrega 01 de Bootcamp Devops Educacion IT - 21-11-2024
 
 # Importante para correr el pipeline se debe habilitar permisos de Sudo en Jenkins para que pueda correr los comandos Jenkins.
 - Primero debemos entrar en la carpeta /etc/sudoers.d/ "Posiblemente necesitaremos permisos de root para hacerlo"
@@ -13,9 +13,9 @@ Entrega 01 de Bootcamp
 - pipeline-crear-usuario-y-grupo: Job de pipeline para la creacion de usuario y grupo, se le pedira tres variables para poder crear el nuevo usuario, las variables son: Login, Nombre y Apellido y Departamento
 - pipeline-eliminar-usuario-y-grupo: Job de pipeline para la eliminacion de usuario y grupo, se le pedira 2 variables para poder eliminar el usuario y grupo, las variables son: Login, Departamento.
 
-# Explicacion de uso de Password Fijo:
+# Explicación de uso de Password Fijo:
 - Se agrego en el pipeline:pipeline-crear-usuario-y-grupo una variable de entorno llamado password = "123456789*", en este caso se decidio colocar una clave sencilla, fija y no una que se genere de forma automatica, para evitar complicarle la vida al usuario a la hora de colocar su primera clave.
 
 ## Diagrama de Flujo de Trabajo de Jenkins
 
-![Jenkins + Github](./img/desafio-01.png)
+![Jenkins + Github](./img/desafio1.png)
