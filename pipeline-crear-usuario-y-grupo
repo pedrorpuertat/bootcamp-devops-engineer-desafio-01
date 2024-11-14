@@ -7,7 +7,6 @@ pipeline {
     }
     environment {
         password = "123456789*"
-        message = ""
     }
     stages {
         stage('Crear Usuario y Grupo') {
@@ -16,6 +15,7 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
+                     def message = ""
 
                     // Verificar si el usuario ya existe
                     def userExists = sh(script: "getent passwd $login > /dev/null 2>&1", returnStatus: true)
@@ -33,6 +33,7 @@ pipeline {
                         """
                         env.message = "Usuario ${login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
                     }
+                    currentBuild.description = message
                 }
             }
         }
@@ -40,7 +41,7 @@ pipeline {
     post {
         success {
             // Imprimir el mensaje de éxito que se haya asignado en el script
-            echo "${env.message}"
+            echo "${currentBuild.description}"
         }
         aborted {
             echo "El proceso fue abortado."
