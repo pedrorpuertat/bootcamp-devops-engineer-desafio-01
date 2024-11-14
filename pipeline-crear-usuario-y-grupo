@@ -31,7 +31,7 @@ pipeline {
                             echo "$login:${env.password}" | sudo chpasswd
                             sudo passwd -e $login
                         """
-                        message = "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
+                        message = "Usuario ${login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
                     }
                 }
             }
