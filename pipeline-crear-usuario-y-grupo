@@ -16,23 +16,20 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
+                    def message = ""
 
-                    def userExists = sh(script: "getent passwd $login > /dev/null 2>&1", returnStatus: true)
+                    sh """
+                        if getent passwd  "$login" > /dev/null 2>&1; then
 
-                    if (userExists == 0) {
-                        currentBuild.result = 'SUCCESS'
-                        echo "El usuario $login ya existe. No se realizó ninguna modificación."
-                    } else {
-                        // Si el usuario no existe, lo creamos
-                        echo "Creando el usuario: $login"
-                        sh """
-                            sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
-                            echo "$login:${env.password}" | sudo chpasswd
-                            sudo passwd -e $login
-                        """
-                        currentBuild.result = 'SUCCESS'
-                        echo "Usuario ${login} fue creado con éxito. La contraseña temporal es: ${env.password}"
-                    }
+                           message 'El usuario $login ya existe, no se puede continuar.'
+                            
+                        else
+                                echo 'Creando el usuario: $login'
+                                sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
+                                echo "$login:${env.password}" | sudo chpasswd
+                                sudo passwd -e $login
+                             message = "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"
+                        fi
                     """
                 }
             }
@@ -40,17 +37,14 @@ pipeline {
     }
     post {
         success {
-            
-            if (currentBuild.result == 'SUCCESS') {
-                echo "El proceso ha finalizado."
-            }
+             echo "${message}"
         }
         aborted {
             echo "El usuario no fueron creados"
             sh "sudo userdel -r ${params.login}"
         }
         failure {
-            echo "ERROR, el usuario y grupo fueron eliminado"
+            echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
             sh "sudo userdel -r ${params.login}"
         }
     }
