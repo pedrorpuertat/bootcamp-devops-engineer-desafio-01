@@ -15,14 +15,14 @@ pipeline {
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
-                     def message = ""
+                    def message = ""
 
                     // Verificar si el usuario ya existe
                     def userExists = sh(script: "getent passwd $login > /dev/null 2>&1", returnStatus: true)
 
                     if (userExists == 0) {
                         // El usuario ya existe, no se hace nada
-                        env.message = "El usuario $login ya existe, no se puede continuar."  // Asignamos mensaje
+                        message = "El usuario $login ya existe, no se puede continuar."  // Asignamos mensaje
                     } else {
                         // El usuario no existe, lo creamos
                         echo "Creando el usuario: $login"
@@ -31,7 +31,7 @@ pipeline {
                             echo "$login:${env.password}" | sudo chpasswd
                             sudo passwd -e $login
                         """
-                        env.message = "Usuario ${login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
+                        message = "Usuario ${login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
                     }
                     currentBuild.description = message
                 }
