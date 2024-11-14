@@ -21,21 +21,21 @@ pipeline {
                                 # Eliminar el usuario y su carpeta home
                                 sudo userdel -r $login
                                 echo 'Usuario $login fue eliminado con su carpeta de home.'
-
-                                # Verificar si el grupo está vacío antes de eliminarlo
-                                if getent group $departamento > /dev/null 2>&1; then
-                                    # Eliminar el grupo si no tiene usuarios asignados
-                                    if ! grep -q ":$departamento:" /etc/passwd; then
-                                        sudo groupdel $departamento
-                                        echo 'Grupo $departamento fue eliminado.'
-                                    else
-                                        echo 'El grupo $departamento no se puede eliminar porque tiene usuarios asignados.'
-                                    fi
-                                else
-                                    echo 'El grupo $departamento no existe.'
-                                fi
                             else
                                 echo 'El usuario $login no existe, no se puede eliminar.'
+                            fi
+
+                            # Verificar si el grupo está vacío antes de eliminarlo
+                            if getent group $departamento > /dev/null 2>&1; then
+                                # Eliminar el grupo si no tiene usuarios asignados
+                                if ! grep -q ":$departamento:" /etc/passwd; then
+                                    sudo groupdel $departamento
+                                    echo 'Grupo $departamento fue eliminado.'
+                                else
+                                    echo 'El grupo $departamento no se puede eliminar porque tiene usuarios asignados.'
+                                fi
+                            else
+                                echo 'El grupo $departamento no existe.'
                             fi
                     """
                 }

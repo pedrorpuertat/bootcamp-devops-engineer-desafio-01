@@ -19,18 +19,13 @@ pipeline {
 
                     // Ejecutar los comandos en la shell de Ubuntu, como el usuario 'ubuntu'
                     sh """
-                            # Verificar si el usuario ya existe usando getent
+                        # Verificar si el usuario ya existe usando getent
                             if getent passwd  "$login" > /dev/null 2>&1; then
-                                echo 'El usuario $login ya existe, no se puede continuar.'
-                            else
-                                # Crear el grupo si no existe
-                                if ! getent group $departamento > /dev/null 2>&1; then
-                                    echo 'Creando grupo: $departamento'
-                                    sudo groupadd $departamento
-                                else
-                                    echo 'El grupo $departamento ya existe'
-                                fi
 
+                                echo 'El usuario $login ya existe, no se puede continuar.'
+
+                            else
+                                
                                 # Crear el usuario con el login proporcionado
                                 echo 'Creando el usuario: $login'
                                 sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
@@ -51,14 +46,12 @@ pipeline {
             echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"
         }
         aborted {
-            echo "El usuario y grupo no fueron creados"
+            echo "El usuario no fueron creados"
             sh "sudo userdel -r ${params.login}"
-            sh "sudo groupdel ${params.departamento}"
         }
         failure {
             echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
             sh "sudo userdel -r ${params.login}"
-            sh "sudo groupdel ${params.departamento}"
         }
     }
 }
