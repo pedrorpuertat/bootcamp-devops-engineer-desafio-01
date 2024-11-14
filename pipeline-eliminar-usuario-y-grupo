@@ -31,7 +31,7 @@ pipeline {
                                 echo 'El grupo $departamento no se puede eliminar porque tiene usuarios asignados.'
                             fi
                         else
-                            echo 'El grupo $departamento no existe.'
+                            echo 'El grupo $departamento no existe, no se puede eliminar'
                         fi
                     """
                 }

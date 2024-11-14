@@ -15,3 +15,7 @@ Entrega 01 de Bootcamp
 
 # Explicacion de uso de Password Fijo:
 - Se agrego en el pipeline:pipeline-crear-usuario-y-grupo una variable de entorno llamado password = "123456789*", en este caso se decidio colocar una clave sencilla, fija y no una que se genere de forma automatica, para evitar complicarle la vida al usuario a la hora de colocar su primera clave.
+
+## Diagrama de Flujo de Trabajo de Jenkins
+
+![Jenkins + Github](./img/desafio-01.png)
