@@ -5,46 +5,48 @@ pipeline {
         string(name: 'nombre-apellido', defaultValue: '', description: 'Ingresa el Nombre y Apellido')
         string(name: 'departamento', defaultValue: '', description: 'Ingresa el grupo del usuario')
     }
-     environment {
+    environment {
         password = "123456789*"
     }
     stages {
         stage('Crear Usuario y Grupo') {
             steps {
                 script {
-   
                     def login = params.login
                     def nombreApellido = params.'nombre-apellido'
                     def departamento = params.departamento
-                    def message = ""
+                    def message = ""  // Variable para almacenar el mensaje
 
-                    sh """
-                        if getent passwd  "$login" > /dev/null 2>&1; then
+                    // Verificar si el usuario ya existe
+                    def userExists = sh(script: "getent passwd $login > /dev/null 2>&1", returnStatus: true)
 
-                           message 'El usuario $login ya existe, no se puede continuar.'
-                            
-                        else
-                                echo 'Creando el usuario: $login'
-                                sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
-                                echo "$login:${env.password}" | sudo chpasswd
-                                sudo passwd -e $login
-                             message = "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"
-                        fi
-                    """
+                    if (userExists == 0) {
+                        // El usuario ya existe, no se hace nada
+                        message = "El usuario $login ya existe, no se puede continuar."  // Asignamos mensaje
+                    } else {
+                        // El usuario no existe, lo creamos
+                        echo "Creando el usuario: $login"
+                        sh """
+                            sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
+                            echo "$login:${env.password}" | sudo chpasswd
+                            sudo passwd -e $login
+                        """
+                        message = "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"  // Asignamos mensaje
+                    }
                 }
             }
         }
     }
     post {
         success {
-             echo "${message}"
+            // Imprimir el mensaje de éxito que se haya asignado en el script
+            echo "${message}"
         }
         aborted {
-            echo "El usuario no fueron creados"
-            sh "sudo userdel -r ${params.login}"
+            echo "El proceso fue abortado."
         }
         failure {
-            echo "ERROR DE CODIGO, el usuario y grupo fueron eliminado"
+            echo "ERROR DE CÓDIGO, el usuario y grupo fueron eliminados"
             sh "sudo userdel -r ${params.login}"
         }
     }
