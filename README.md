@@ -1,5 +1,5 @@
 # bootcamp-devops-engineer-desafio-01
-Entrega 01 de Botocamp
+Entrega 01 de Bootcamp
 
 # Importante para correr el pipeline se debe habilitar permisos de Sudo en Jenkins para que pueda correr los comandos Jenkins.
 - Primero debemos entrar en la carpeta /etc/sudoers.d/ "Posiblemente necesitaremos permisos de root para hacerlo"

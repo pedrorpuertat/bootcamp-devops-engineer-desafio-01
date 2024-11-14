@@ -21,6 +21,7 @@ pipeline {
                         if getent passwd  "$login" > /dev/null 2>&1; then
 
                             echo 'El usuario $login ya existe, no se puede continuar.'
+                            error("El usuario ya existe, pipeline abortada.")
 
                         else
                                 echo 'Creando el usuario: $login'
