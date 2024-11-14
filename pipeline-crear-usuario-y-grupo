@@ -19,15 +19,17 @@ pipeline {
 
                     sh """
                         if getent passwd  "$login" > /dev/null 2>&1; then
-
+                            currentBuild.result = 'SUCCESS'
                             echo 'El usuario $login ya existe, no se puede continuar.'
-                            error("El usuario ya existe, pipeline abortada.")
 
                         else
                                 echo 'Creando el usuario: $login'
                                 sudo useradd -m -s /bin/bash -c '$nombreApellido' -g $departamento $login
                                 echo "$login:${env.password}" | sudo chpasswd
                                 sudo passwd -e $login
+
+                                currentBuild.result = 'SUCCESS'
+                                echo "Usuario $login fue creado con éxito. La contraseña temporal es: $password"
                         fi
                     """
                 }
@@ -36,7 +38,10 @@ pipeline {
     }
     post {
         success {
-            echo "Usuario ${params.login} fue creado con éxito. La contraseña temporal es: ${env.password}"
+            
+            if (currentBuild.result == 'SUCCESS') {
+                echo "El proceso ha finalizado."
+            }
         }
         aborted {
             echo "El usuario no fueron creados"
